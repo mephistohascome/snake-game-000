@@ -1,5 +1,6 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+const scores = document.getElementById('scores');
 
 const canvasSize = 400;
 canvas.width = canvasSize;
@@ -10,12 +11,16 @@ const box = 20;
 let snake = [];
 snake[0] = { x: 9 * box, y: 10 * box };
 
+let circleImage = new Image();
+circleImage.src = 'logo/icon.png';
+
 let circle = {
     x: Math.floor(Math.random() * 19 + 1) * box,
     y: Math.floor(Math.random() * 19 + 1) * box,
 };
 
 let direction = '';
+let score = 0;
 
 document.addEventListener('keydown', setDirection);
 
@@ -50,11 +55,7 @@ function drawGame() {
         ctx.strokeRect(snake[i].x, snake[i].y, box, box);
     }
 
-    ctx.beginPath();
-    ctx.arc(circle.x + box / 2, circle.y + box / 2, box / 2, 0, Math.PI * 2);
-    ctx.fillStyle = '#f1c40f';
-    ctx.fill();
-    ctx.closePath();
+    ctx.drawImage(circleImage, circle.x, circle.y, box, box); 
 
     let snakeX = snake[0].x;
     let snakeY = snake[0].y;
@@ -65,6 +66,9 @@ function drawGame() {
     if (direction == 'DOWN') snakeY += box;
 
     if (snakeX == circle.x && snakeY == circle.y) {
+        score++;
+        scores.innerHTML = 'Score: ' + score;
+        
         circle = {
             x: Math.floor(Math.random() * 19 + 1) * box,
             y: Math.floor(Math.random() * 19 + 1) * box,
@@ -77,7 +81,7 @@ function drawGame() {
 
     if (snakeX < 0 || snakeX >= canvasSize || snakeY < 0 || snakeY >= canvasSize || collision(newHead, snake)) {
         clearInterval(game);
-        alert('Game Over!');
+        alert('Game Over! Score: ' + score);
         return;
     }
 
